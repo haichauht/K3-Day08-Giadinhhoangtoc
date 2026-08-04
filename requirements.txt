@@ -2,37 +2,36 @@
 python-dotenv>=1.0.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0
-numpy>=1.24.0
+numpy>=1.26.0
 
-# Task 2 - Crawling
-crawl4ai>=0.3.0
+# Document conversion
+markitdown[pdf]>=0.1.6
 
-# Task 3 - Document conversion
-markitdown[pdf]>=0.1.0
-fpdf2>=2.7.0
-
-# Task 4 - Chunking & Indexing
+# Chunking
 langchain-text-splitters>=0.2.0
-sentence-transformers>=2.2.0
+
+# Vector store
 chromadb>=0.5.0
 
-# Task 6 - BM25 + TF-IDF
+# Keyword retrieval
 rank-bm25>=0.2.2
 scikit-learn>=1.3.0
 
-# Task 8 - PageIndex
-pageindex>=0.1.0
+# Vectorless cloud retrieval
+pageindex>=0.2.8
 
-# Task 10 - Generation
+# LLM & Embeddings
 openai>=1.30.0
+sentence-transformers>=3.0.0,<4.0.0
+transformers>=4.41.0,<5.0.0
 
-# Group project - UI
-streamlit>=1.35.0
-
-# Group project - Evaluation
+# Evaluation
 ragas==0.1.21
-datasets>=2.14.0
+datasets>=2.14.0,<5.0.0
 langchain-openai>=0.1.0
 
-# Testing (dung de cham diem bai ca nhan)
+# Testing
 pytest>=7.0.0
+
+# UI
+streamlit>=1.33.0

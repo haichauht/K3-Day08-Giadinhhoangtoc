@@ -14,9 +14,15 @@ data/_tmp_pdf/
 
 # Temp / cache
 .pytest_cache/
+.ruff_cache/
+.runtime/
+tmp/
 *.tmp
 pageindex_doc_ids.json
 pageindex_pdfs/
+chroma_db/
+pageindex_cache/
+logs/
 
 # IDE
 .vscode/

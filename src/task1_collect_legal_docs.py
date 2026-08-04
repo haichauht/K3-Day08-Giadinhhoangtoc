@@ -1,54 +1,49 @@
-"""
-Task 1 — Thu thập văn bản chính sách/quy định dịch vụ đại học.
+"""Task 1 - Validate collected legal documents and their provenance metadata."""
 
-Hướng dẫn:
-    1. Tìm tối thiểu 3 văn bản chính sách (PDF/DOCX) từ trang công khai của một trường đại học.
-    2. Tải về và lưu vào data/landing/legal/
-    3. Đặt tên file rõ ràng, không dấu, mô tả đúng nội dung.
+from __future__ import annotations
 
-Gợi ý nguồn (ví dụ trang công khai RMIT Vietnam — rmit.edu.vn):
-    - https://www.rmit.edu.vn/study-at-rmit/tuition-fees
-    - https://www.rmit.edu.vn/study-at-rmit/scholarships/...
-    - https://www.rmit.edu.vn/students/my-studies/fees-and-payments
-
-Gợi ý văn bản (chủ đề dịch vụ đại học):
-    - Học phí & phương thức thanh toán (Tuition Fees)
-    - Chính sách học bổng (Scholarship eligibility)
-    - Quy định ký túc xá / hỗ trợ chỗ ở (Accommodation Services)
-    - Hướng dẫn đăng ký học phần qua cổng thông tin sinh viên (Course Registration)
-
-Lưu ý: một số trang trường (vd VinUni, Fulbright) chặn bot crawler mặc định (HTTP 403) —
-không phải lỗi của bạn, đó là cấu hình WAF/Cloudflare phía server. Đổi sang trang khác
-thay vì cố vượt qua, và chỉ dùng nguồn công khai/được phép chia sẻ.
-"""
-
+import json
 from pathlib import Path
 
-DATA_DIR = Path(__file__).parent.parent / "data" / "landing" / "legal"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO_ROOT / "data" / "landing" / "legal"
+SOURCES_PATH = DATA_DIR / "sources.json"
+MINIMUM_DOCUMENTS = 3
 
 
-def setup_directory():
-    """Tạo thư mục data/landing/legal/ nếu chưa có."""
+def setup_directory() -> Path:
+    """Create and return the legal landing directory."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"✓ Thư mục đã sẵn sàng: {DATA_DIR}")
+    return DATA_DIR
 
 
-# TODO: Tải file PDF/DOCX về DATA_DIR
-# Có thể tải thủ công hoặc viết script download nếu có direct link.
-#
-# Ví dụ nếu có direct link:
-#
-# import requests
-#
-# def download_file(url: str, filename: str):
-#     response = requests.get(url)
-#     filepath = DATA_DIR / filename
-#     filepath.write_bytes(response.content)
-#     print(f"✓ Đã tải: {filepath}")
-#
-# Nếu trang là HTML thuần (không phải PDF sẵn), có thể convert nội dung text
-# thành PDF đơn giản bằng thư viện fpdf2 (đã có trong requirements.txt).
+def validate_legal_landing() -> dict:
+    """Verify that every source record points to a collected local document."""
+    setup_directory()
+    if not SOURCES_PATH.exists():
+        raise FileNotFoundError(f"Missing provenance manifest: {SOURCES_PATH}")
+
+    sources = json.loads(SOURCES_PATH.read_text(encoding="utf-8"))
+    if not isinstance(sources, list) or len(sources) < MINIMUM_DOCUMENTS:
+        raise ValueError(
+            f"Expected at least {MINIMUM_DOCUMENTS} legal sources, got {len(sources)}"
+        )
+
+    required = {"title", "url", "filename", "downloaded_at"}
+    for index, source in enumerate(sources, start=1):
+        missing = required - source.keys()
+        if missing:
+            raise ValueError(f"Source {index} is missing: {sorted(missing)}")
+        document_path = DATA_DIR / source["filename"]
+        if not document_path.is_file():
+            raise FileNotFoundError(f"Missing collected document: {document_path}")
+
+    return {
+        "documents": len(sources),
+        "manifest": SOURCES_PATH.relative_to(REPO_ROOT).as_posix(),
+        "status": "valid",
+    }
 
 
 if __name__ == "__main__":
-    setup_directory()
+    print(json.dumps(validate_legal_landing(), ensure_ascii=False, indent=2))
