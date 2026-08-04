@@ -1,12 +1,20 @@
-# Quy định đào tạo song ngành trình độ đại học của ĐHQG-HCM
-
-**Source file:** quy-dinh-dao-tao-song-nganh-dhqg-hcm.pdf
-
-**Source URL:** https://daa.uit.edu.vn/sites/daa/files/202310/1195-qd-dhqg_27-9-2019_quy_dinh_dao_tao_song_nganh_dhqg.pdf
-
-**Downloaded:** 2026-08-04T03:03:03.770576+00:00
-
 ---
+doc_id: "legal-quy-dinh-dao-tao-song-nganh-dhqg-hcm"
+title: "Quy định đào tạo song ngành trình độ đại học của ĐHQG-HCM"
+source_url: "https://daa.uit.edu.vn/sites/daa/files/202310/1195-qd-dhqg_27-9-2019_quy_dinh_dao_tao_song_nganh_dhqg.pdf"
+source_file: "data/landing/legal/quy-dinh-dao-tao-song-nganh-dhqg-hcm.pdf"
+retrieved_at: "2026-08-04"
+document_version: "1195/QĐ-ĐHQG"
+page_published_at: "2019-09-27"
+audience: "student"
+institution: "dhqg-hcm"
+category: "academic-regulation"
+language: "vi"
+conversion_method: "manual-visual-transcription"
+cleaning_version: "manual-v1"
+---
+
+# Quy định đào tạo song ngành trình độ đại học của ĐHQG-HCM
 
 ## Trang 1
 
