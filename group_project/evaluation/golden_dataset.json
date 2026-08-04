@@ -1,17 +1,77 @@
 [
   {
-    "question": "Học phí hàng năm của chương trình Business tại RMIT Vietnam là bao nhiêu?",
-    "expected_answer": "Khoảng 375.840.000 VND mỗi năm (tùy chương trình cụ thể).",
-    "expected_context": "Trang Tuition Fees, mục Undergraduate Programs"
+    "question": "Đào tạo song ngành là gì?",
+    "expected_answer": "Đào tạo song ngành là phương thức tổ chức học cùng lúc hai chương trình đào tạo.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 2 giải thích từ ngữ"
   },
   {
-    "question": "Học phí được thanh toán theo hình thức nào?",
-    "expected_answer": "Thanh toán theo từng học kỳ, tính theo từng môn học đã đăng ký.",
-    "expected_context": "Trang Tuition Fees, mục Payment Structure"
+    "question": "Sinh viên cần đáp ứng điều kiện nào để đăng ký học song ngành?",
+    "expected_answer": "Sinh viên phải đang học đại học hệ chính quy tập trung của ĐHQG-HCM, ngành thứ hai khác ngành thứ nhất, đã hoàn thành năm học đầu tiên và có học lực từ trung bình khá trở lên.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 6"
   },
   {
-    "question": "Trường có cung cấp ký túc xá trong khuôn viên không?",
-    "expected_answer": "Không — trường không cung cấp chỗ ở trong khuôn viên, nhưng có đội ngũ hỗ trợ sinh viên tìm chỗ ở gần trường.",
-    "expected_context": "Trang Accommodation Services"
+    "question": "Trong thời gian học song ngành, sinh viên phải duy trì điều kiện học tập nào?",
+    "expected_answer": "Sinh viên phải bảo đảm khối lượng học của ngành thứ nhất, không có học lực từ trung bình trở xuống và không bị cảnh báo học vụ hoặc đình chỉ ở một trong hai chương trình; nếu không duy trì thì phải dừng ngành thứ hai ở học kỳ tiếp theo.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 8 khoản 3"
+  },
+  {
+    "question": "Thời gian tối đa được phép học song ngành được xác định thế nào?",
+    "expected_answer": "Thời gian tối đa học song ngành bằng thời gian tối đa quy định cho chương trình đào tạo ngành thứ nhất.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 8 khoản 4"
+  },
+  {
+    "question": "Học phí của sinh viên học song ngành được tính như thế nào?",
+    "expected_answer": "Học phí là tổng học phí các môn của ngành thứ nhất và các môn của ngành thứ hai mà sinh viên đăng ký; mỗi nhóm môn áp dụng mức học phí của cơ sở đào tạo quản lý chương trình tương ứng.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 9"
+  },
+  {
+    "question": "Sinh viên có được hưởng học bổng hoặc miễn giảm học phí cho ngành thứ hai không?",
+    "expected_answer": "Không. Sinh viên không được tham gia các chính sách học bổng và miễn giảm học phí đối với chương trình đào tạo ngành thứ hai.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 9 khoản 4"
+  },
+  {
+    "question": "Điều kiện tiên quyết để xét tốt nghiệp ngành thứ hai là gì?",
+    "expected_answer": "Trong thời gian tối đa cho phép, sinh viên phải đã đủ điều kiện tốt nghiệp chương trình đào tạo ngành thứ nhất.",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 10"
+  },
+  {
+    "question": "Mức độ tương đồng tối thiểu để công nhận, chuyển đổi tín chỉ là bao nhiêu?",
+    "expected_answer": "Các vi học phần, khối học phần hoặc môn học phải có mức độ tương đồng từ 70% trở lên.",
+    "expected_context": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md, Điều 4 khoản 5"
+  },
+  {
+    "question": "Người học có những quyền gì khi tham gia công nhận và chuyển đổi tín chỉ?",
+    "expected_answer": "Người học được tiếp cận tài liệu và được giải đáp thắc mắc; được đăng ký học để xét công nhận, chuyển đổi tín chỉ đối với các nội dung được cơ sở đào tạo công bố; đồng thời phải tuân thủ quy định học vụ.",
+    "expected_context": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md, Điều 8"
+  },
+  {
+    "question": "Học phí đào tạo từ xa của UIT được tính theo nguyên tắc nào?",
+    "expected_answer": "Học phí được thu theo từng học kỳ và bằng tổng học phí tín chỉ học mới, học lại và học cải thiện, mỗi phần được tính bằng mức học phí loại tín chỉ nhân với số tín chỉ tương ứng.",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 11"
+  },
+  {
+    "question": "Sinh viên đào tạo từ xa cần đáp ứng gì để được xét tốt nghiệp?",
+    "expected_answer": "Tại thời điểm xét, sinh viên không bị truy cứu trách nhiệm hình sự hoặc kỷ luật từ đình chỉ trở lên, đã hoàn thành nghĩa vụ học phí, hoàn thành các môn học và tích lũy đủ tín chỉ theo chương trình.",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 21"
+  },
+  {
+    "question": "Môn Giáo dục cảm xúc xã hội được công nhận là môn gì và áp dụng từ khi nào?",
+    "expected_answer": "Môn Giáo dục cảm xúc xã hội được công nhận là môn tự chọn tự do cho mọi ngành đại học chính quy của UIT và sinh viên có thể đăng ký từ học kỳ 1 năm học 2026-2027.",
+    "expected_context": "article_01.md, thông báo công nhận môn Giáo dục cảm xúc xã hội"
+  },
+  {
+    "question": "Thông báo thu học phí học kỳ 2 năm học 2025-2026 hướng sinh viên xem chi tiết ở đâu?",
+    "expected_answer": "Thông báo hướng sinh viên xem chi tiết trên trang của Phòng Kế hoạch Tài chính UIT tại liên kết khtc.uit.edu.vn được đính kèm trong bài.",
+    "expected_context": "article_02.md, thông báo thu học phí học kỳ 2 năm học 2025-2026"
+  },
+  {
+    "question": "Tân sinh viên UIT xem thời khóa biểu cá nhân bằng những bước nào?",
+    "expected_answer": "Truy cập student.uit.edu.vn, đăng nhập bằng tài khoản chứng thực, chọn mục Sinh viên rồi chọn Tra cứu và Lịch TKB - Lịch thi; sau đó có thể xem lịch theo tuần, toàn trường hoặc cá nhân.",
+    "expected_context": "article_04.md, phần cách đăng nhập để xem thời khóa biểu"
+  },
+  {
+    "question": "Sau khi khai báo hồ sơ trực tuyến, tân sinh viên phải làm gì để dữ liệu được gửi duyệt?",
+    "expected_answer": "Sinh viên phải nhấn LƯU MỤC NÀY để lưu thông tin, sau đó nhấn NỘP DUYỆT để Phòng Công tác Sinh viên kiểm tra; chỉ tải tệp lên không đồng nghĩa với đã lưu.",
+    "expected_context": "article_05.md, phần lưu thông tin và nộp duyệt hồ sơ trực tuyến"
   }
 ]

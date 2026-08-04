@@ -26,8 +26,9 @@ pageindex>=0.1.0
 # Task 10 - Generation
 openai>=1.30.0
 
-# Group project - UI
-streamlit>=1.35.0
+# Group project - web demo (không dùng Streamlit)
+fastapi>=0.115.0,<1.0
+uvicorn[standard]>=0.30.0
 
 # Group project - Evaluation
 ragas==0.1.21

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="UIT Policy RAG — interactive architecture and chatbot demo">
+  <title>UIT Policy RAG — Live Demo</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">UI</div>
+        <div>
+          <strong>UIT Policy RAG</strong>
+          <span>Architecture demo</span>
+        </div>
+      </div>
+
+      <nav class="primary-nav" aria-label="Điều hướng chính">
+        <button class="nav-item active" data-view="chat" type="button">
+          <span class="nav-icon">◉</span><span>Chat demo</span><kbd>1</kbd>
+        </button>
+        <button class="nav-item" data-view="flow" type="button">
+          <span class="nav-icon">⌁</span><span>Luồng hệ thống</span><kbd>2</kbd>
+        </button>
+        <button class="nav-item" data-view="data" type="button">
+          <span class="nav-icon">▦</span><span>Data & công nghệ</span><kbd>3</kbd>
+        </button>
+        <button class="nav-item" data-view="evaluation" type="button">
+          <span class="nav-icon">↗</span><span>RAGAS evaluation</span><kbd>4</kbd>
+        </button>
+      </nav>
+
+      <div class="sidebar-section">
+        <p class="sidebar-label">Knowledge base</p>
+        <div class="mini-stat-grid">
+          <div class="mini-stat"><strong id="side-legal">3</strong><span>PDF legal</span></div>
+          <div class="mini-stat"><strong id="side-news">5</strong><span>News JSON</span></div>
+          <div class="mini-stat"><strong id="side-chunks">335</strong><span>Chunks</span></div>
+          <div class="mini-stat"><strong id="side-pageindex">3</strong><span>PageIndex</span></div>
+        </div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-row">
+          <span class="pulse-dot" id="system-dot"></span>
+          <div><strong id="system-label">Đang kết nối</strong><span>Live pipeline</span></div>
+        </div>
+        <div class="system-services">
+          <span id="openai-state">OpenAI · ...</span>
+          <span id="pageindex-state">PageIndex · ...</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span>Day 08 · K3</span>
+        <strong>35/35 tests</strong>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">UNIVERSITY SERVICES · UIT / ĐHQG-HCM</p>
+          <h1 id="page-title">Trợ lý chính sách học vụ</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="model-pill"><i></i> gpt-5.6-luna</span>
+          <button class="icon-button" id="reset-chat" type="button" title="Xóa hội thoại">↻</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-chat" aria-labelledby="page-title">
+        <div class="chat-intro">
+          <div>
+            <span class="section-tag">LIVE RAG</span>
+            <h2>Hỏi dữ liệu thật. Xem pipeline chạy thật.</h2>
+            <p>Mỗi câu trả lời được truy xuất từ 3 quy chế và 5 thông báo chính thức, kèm citation và trace từng công nghệ.</p>
+          </div>
+          <div class="intro-metric">
+            <span>RAGAS score</span><strong>0.835</strong><small>Hybrid + RRF</small>
+          </div>
+        </div>
+
+        <div class="suggestion-row" aria-label="Câu hỏi gợi ý">
+          <button class="suggestion" type="button">Điều kiện học song ngành?</button>
+          <button class="suggestion" type="button">Mức tương đồng chuyển đổi tín chỉ?</button>
+          <button class="suggestion" type="button">Cách xem thời khóa biểu?</button>
+          <button class="suggestion" type="button">Hồ sơ online nộp duyệt thế nào?</button>
+        </div>
+
+        <div class="demo-workspace">
+          <section class="chat-panel" aria-label="Hội thoại">
+            <div class="panel-heading">
+              <div><span class="panel-kicker">Conversation</span><strong>Grounded assistant</strong></div>
+              <span class="secure-label">Chỉ dùng context</span>
+            </div>
+            <div class="messages" id="messages" aria-live="polite">
+              <article class="message assistant">
+                <div class="avatar">AI</div>
+                <div class="message-body">
+                  <div class="message-meta"><strong>UIT RAG</strong><span>vừa xong</span></div>
+                  <div class="message-content">
+                    Chào bạn! Hãy hỏi mình về <strong>song ngành, chuyển đổi tín chỉ, học phí, ngoại ngữ, thời khóa biểu</strong> hoặc <strong>hồ sơ nhập học</strong>. Mình sẽ cho bạn xem cả nguồn và luồng xử lý.
+                  </div>
+                </div>
+              </article>
+            </div>
+            <form class="composer" id="chat-form">
+              <textarea id="query-input" rows="1" maxlength="2000" placeholder="Hỏi về chính sách hoặc thông báo UIT..." aria-label="Câu hỏi"></textarea>
+              <div class="composer-footer">
+                <div class="top-k-control">
+                  <label for="top-k">Context</label>
+                  <select id="top-k"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option></select>
+                  <span>chunks</span>
+                </div>
+                <button class="send-button" id="send-button" type="submit"><span>Gửi câu hỏi</span><b>↗</b></button>
+              </div>
+            </form>
+          </section>
+
+          <aside class="trace-panel" aria-label="Pipeline trace">
+            <div class="panel-heading">
+              <div><span class="panel-kicker">Observability</span><strong>Live pipeline trace</strong></div>
+              <span class="trace-time" id="trace-total">idle</span>
+            </div>
+            <div class="trace-empty" id="trace-empty">
+              <div class="trace-orbit"><span></span></div>
+              <strong>Chưa có truy vấn</strong>
+              <p>Gửi câu hỏi để xem dense, sparse, fusion, fallback và generation chạy theo thời gian thực.</p>
+            </div>
+            <div class="trace-list hidden" id="trace-list"></div>
+            <div class="retrieval-summary hidden" id="retrieval-summary"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-flow">
+        <div class="section-header">
+          <div><span class="section-tag">SYSTEM DESIGN</span><h2>Một câu hỏi đi qua hệ thống thế nào?</h2><p>Hai retriever chạy song song, sau đó fusion và chỉ gọi fallback khi độ tin cậy thấp.</p></div>
+          <button class="secondary-button" id="animate-flow" type="button">▶ Chạy mô phỏng</button>
+        </div>
+
+        <div class="architecture-card">
+          <div class="flow-row primary-flow">
+            <div class="flow-node query-node" data-step="0"><span>01</span><strong>User query</strong><small>Vietnamese question</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="parallel-group">
+              <div class="flow-node" data-step="1"><span>02A</span><strong>Semantic</strong><small>OpenAI → ChromaDB</small></div>
+              <div class="flow-node" data-step="2"><span>02B</span><strong>BM25</strong><small>Exact term matching</small></div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node accent" data-step="3"><span>03</span><strong>RRF fusion</strong><small>Rank + relevance</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" data-step="4"><span>04</span><strong>Top-k context</strong><small>Reorder + labels</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node output-node" data-step="5"><span>05</span><strong>OpenAI</strong><small>Answer + [S#]</small></div>
+          </div>
+          <div class="fallback-lane">
+            <span class="branch-line"></span>
+            <div class="decision-chip">cosine &lt; 0.30?</div>
+            <span class="flow-arrow small">→</span>
+            <div class="flow-node pageindex-node" data-step="fallback"><span>F</span><strong>PageIndex</strong><small>Vectorless PDF tree</small></div>
+            <span class="return-line">↗ quay lại context</span>
+          </div>
+        </div>
+
+        <div class="explain-grid">
+          <article><span class="explain-index">A</span><h3>Vì sao cần Hybrid?</h3><p>Semantic hiểu ý nghĩa, BM25 bắt chính xác “Điều 6”, “70%”, tên học kỳ và thuật ngữ hành chính. RRF kết hợp thứ hạng thay vì cộng hai thang điểm không tương thích.</p></article>
+          <article><span class="explain-index">B</span><h3>Fallback không dùng RRF score</h3><p>Quyết định fallback dựa trên cosine gốc của dense search. RRF chỉ thể hiện thứ hạng, top-1 luôn quanh 0.016 nên không dùng để đo độ tin cậy.</p></article>
+          <article><span class="explain-index">C</span><h3>Citation chống hallucination</h3><p>Mỗi chunk được gắn nhãn S1–S5. Prompt buộc model chỉ dùng context và từ chối khi không đủ bằng chứng.</p></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-data">
+        <div class="section-header">
+          <div><span class="section-tag">KNOWLEDGE BASE</span><h2>Data nhỏ, đúng nguồn, có cấu trúc</h2><p>100% từ website chính thức UIT/ĐHQG-HCM; corpus được giới hạn đúng yêu cầu bài lab.</p></div>
+          <div class="quality-badge"><strong>8</strong><span>documents</span></div>
+        </div>
+
+        <div class="stat-card-row">
+          <article class="stat-card"><span>Raw legal</span><strong id="data-legal">3</strong><small>PDF · official policy</small></article>
+          <article class="stat-card"><span>Raw news</span><strong id="data-news">5</strong><small>JSON · UIT articles</small></article>
+          <article class="stat-card"><span>Standardized</span><strong id="data-md">8</strong><small>Markdown documents</small></article>
+          <article class="stat-card highlight"><span>Indexed</span><strong id="data-chunks">335</strong><small>chunks · 800/100</small></article>
+        </div>
+
+        <div class="data-tech-grid">
+          <section class="document-card">
+            <div class="subsection-heading"><div><span class="panel-kicker">DATA CATALOG</span><h3>Tài liệu trong corpus</h3></div><div class="filter-group"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="legal">Legal</button><button class="filter" data-filter="news">News</button></div></div>
+            <div class="document-list" id="document-list"></div>
+          </section>
+          <section class="technology-card">
+            <div class="subsection-heading"><div><span class="panel-kicker">TECH STACK</span><h3>Công nghệ và vai trò</h3></div></div>
+            <div class="technology-list" id="technology-list"></div>
+          </section>
+        </div>
+
+        <div class="method-strip">
+          <div><span>CHUNKING</span><strong>Recursive · 800 chars · 100 overlap</strong><p>Giữ trọn điều khoản ngắn, ghép continuation qua ngắt trang PDF.</p></div>
+          <div><span>EMBEDDING</span><strong>text-embedding-3-small · 1024D</strong><p>Multilingual, nhẹ hơn cấu hình 1536D và đồng nhất query/document.</p></div>
+          <div><span>INDEX</span><strong>ChromaDB · cosine · local persistent</strong><p>Không cần Docker, dữ liệu vector không commit lên Git.</p></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-evaluation">
+        <div class="section-header">
+          <div><span class="section-tag">MEASURED, NOT ASSUMED</span><h2>Hybrid thắng Dense-only qua RAGAS</h2><p>15 câu hỏi vàng, 4 metrics, cùng một generation model và top-k để so sánh công bằng.</p></div>
+          <div class="score-hero"><span>Average</span><strong>0.835</strong><small>+0.084 vs dense</small></div>
+        </div>
+
+        <div class="eval-layout">
+          <section class="eval-chart-card">
+            <div class="legend"><span><i class="hybrid-dot"></i>Hybrid + RRF</span><span><i class="dense-dot"></i>Dense-only</span></div>
+            <div class="metric-list" id="metric-list"></div>
+          </section>
+          <aside class="eval-summary-card">
+            <span class="panel-kicker">EXPERIMENT</span>
+            <h3>Thiết lập đánh giá</h3>
+            <dl>
+              <div><dt>Framework</dt><dd>RAGAS 0.1.21</dd></div>
+              <div><dt>Golden set</dt><dd>15 UIT Q&A</dd></div>
+              <div><dt>Judge</dt><dd>gpt-4.1-mini</dd></div>
+              <div><dt>Config A</dt><dd>Dense + BM25 + RRF</dd></div>
+              <div><dt>Config B</dt><dd>Dense-only ablation</dd></div>
+            </dl>
+            <div class="eval-conclusion"><strong>Kết luận</strong><p>Hybrid tăng mạnh faithfulness và giữ context recall cao, đặc biệt với câu hỏi theo Điều/Khoản và con số pháp lý.</p></div>
+          </aside>
+        </div>
+
+        <div class="insight-row">
+          <article><span class="insight-value">0.974</span><div><strong>Faithfulness</strong><p>Câu trả lời bám đúng context.</p></div></article>
+          <article><span class="insight-value">0.967</span><div><strong>Context Recall</strong><p>Retriever lấy đủ bằng chứng.</p></div></article>
+          <article><span class="insight-value">0.892</span><div><strong>Context Precision</strong><p>Ít chunk nhiễu trong top-k.</p></div></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
