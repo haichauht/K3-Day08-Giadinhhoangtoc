@@ -1,15 +1,14 @@
-"""Crawl news from https://www.uit.edu.vn/tin-uit to Markdown files.
+"""Crawl UIT news into raw JSON snapshots in the landing layer.
 
 Examples:
     python src/task2_crawl_news.py
-    python src/task2_crawl_news.py --pages 2 --delay 1
+    python src/task2_crawl_news.py --pages 10 --limit 5 --delay 1
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-import io
 import json
 import re
 import time
@@ -20,7 +19,6 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup, Tag
-from markitdown import MarkItDown
 
 LIST_URL = "https://www.uit.edu.vn/tin-uit"
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -36,16 +34,8 @@ SOURCE_CSV_FIELDS = (
     "cleaning_version",
 )
 USER_AGENT = (
-    "Mozilla/5.0 (compatible; UITNewsCrawler/1.0; "
-    "+https://www.uit.edu.vn/tin-uit)"
+    "Mozilla/5.0 (compatible; UITNewsCrawler/1.0; +https://www.uit.edu.vn/tin-uit)"
 )
-
-
-def yaml_string(value: str) -> str:
-    """Return a double-quoted YAML scalar without adding a YAML dependency."""
-    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
-    escaped = escaped.replace("\r", " ").replace("\n", " ")
-    return f'"{escaped}"'
 
 
 def slug_from_url(url: str) -> str:
@@ -117,19 +107,8 @@ def make_links_absolute(fragment: Tag, base_url: str) -> None:
         tag["src"] = urljoin(base_url, tag["src"])
 
 
-def html_to_markdown(fragment: Tag, source_url: str) -> str:
-    """Convert the selected article HTML with the locally installed MarkItDown."""
-    fragment = deepcopy(fragment)
-    make_links_absolute(fragment, source_url)
-    html = str(fragment).encode("utf-8")
-    result = MarkItDown().convert_stream(
-        io.BytesIO(html), file_extension=".html", url=source_url
-    )
-    return result.text_content.strip()
-
-
-def crawl_article(session: requests.Session, url: str) -> tuple[str, str]:
-    """Return (filename, complete Markdown document) for one UIT article."""
+def crawl_article(session: requests.Session, url: str) -> tuple[str, dict[str, str]]:
+    """Return a filename and raw, self-contained JSON-serializable article."""
     response = session.get(url, timeout=30)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
@@ -152,37 +131,27 @@ def crawl_article(session: requests.Session, url: str) -> tuple[str, str]:
                 if node.parent:
                     node.parent.decompose()
 
-    content_markdown = html_to_markdown(content, url)
     slug = slug_from_url(url)
     retrieved_at = datetime.now().astimezone().date().isoformat()
-
-    front_matter = [
-        "---",
-        f"doc_id: {yaml_string(f'uit-news-{slug}')}",
-        f"title: {yaml_string(title)}",
-        f"source_url: {yaml_string(url)}",
-        'source_section: "Tin UIT"',
-        f"retrieved_at: {yaml_string(retrieved_at)}",
-        'document_version: "not-stated"',
-        f"page_published_at: {yaml_string(published_at or 'not-stated')}",
-        'audience: "public"',
-        'institution: "uit"',
-        'department: "communications"',
-        'category: "news"',
-        'language: "vi"',
-        'cleaning_version: "markitdown-v1"',
-        "---",
-    ]
-    document = "\n".join(front_matter) + f"\n\n# {title}\n\n{content_markdown}\n"
-    return f"{slug}.md", document
+    content_copy = deepcopy(content)
+    make_links_absolute(content_copy, url)
+    payload = {
+        "url": url,
+        "title": title,
+        "published_at": published_at or "not-stated",
+        "retrieved_at": retrieved_at,
+        "content_html": str(content_copy),
+        "content_text": content_copy.get_text(" ", strip=True),
+    }
+    return f"{slug}.json", payload
 
 
-def crawl(pages: int, output_dir: Path, delay: float) -> int:
+def crawl(pages: int, limit: int, output_dir: Path, delay: float) -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
 
-    article_urls = collect_article_urls(session, pages)
+    article_urls = collect_article_urls(session, pages)[:limit]
     if not article_urls:
         raise RuntimeError("No UIT article URLs were found")
 
@@ -190,9 +159,12 @@ def crawl(pages: int, output_dir: Path, delay: float) -> int:
     for index, article_url in enumerate(article_urls, start=1):
         print(f"[{index}/{len(article_urls)}] Crawling: {article_url}")
         try:
-            filename, document = crawl_article(session, article_url)
+            filename, payload = crawl_article(session, article_url)
             destination = output_dir / filename
-            destination.write_text(document, encoding="utf-8")
+            destination.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
             saved += 1
             print(f"  Saved: {destination}")
         except (requests.RequestException, ValueError) as error:
@@ -205,70 +177,85 @@ def crawl(pages: int, output_dir: Path, delay: float) -> int:
 
 
 def read_front_matter(markdown_path: Path) -> dict[str, str]:
-    """Read the simple YAML front matter emitted by this crawler."""
+    """Read scalar metadata from a generated standardized Markdown file."""
+    if not markdown_path.exists():
+        return {}
     lines = markdown_path.read_text(encoding="utf-8").splitlines()
     if not lines or lines[0] != "---":
         return {}
-
     metadata: dict[str, str] = {}
     for line in lines[1:]:
         if line == "---":
             break
-        key, separator, raw_value = line.partition(":")
-        if not separator:
-            continue
-        raw_value = raw_value.strip()
-        try:
-            value = json.loads(raw_value) if raw_value.startswith('"') else raw_value
-        except json.JSONDecodeError:
-            value = raw_value.strip('"')
-        metadata[key.strip()] = str(value)
+        key, separator, value = line.partition(":")
+        if separator:
+            value = value.strip()
+            try:
+                metadata[key.strip()] = str(json.loads(value))
+            except json.JSONDecodeError:
+                metadata[key.strip()] = value.strip("'\"")
     return metadata
 
 
-def source_file_path(markdown_path: Path) -> str:
-    try:
-        return markdown_path.resolve().relative_to(REPO_ROOT).as_posix()
-    except ValueError:
-        return markdown_path.name
-
-
 def rebuild_source_csv(output_dir: Path) -> tuple[Path, int]:
-    """Rebuild source.csv from all Markdown documents already in output_dir."""
+    """Rebuild landing/source.csv, pointing at standardized Markdown outputs."""
     output_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, str]] = []
 
-    for markdown_path in sorted(output_dir.glob("*.md")):
-        metadata = read_front_matter(markdown_path)
-        required = ("doc_id", "title", "source_url", "retrieved_at")
-        if any(not metadata.get(field) for field in required):
-            print(f"  Source index skipped (missing metadata): {markdown_path.name}")
+    for json_path in sorted(output_dir.glob("*.json")):
+        try:
+            metadata = json.loads(json_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as error:
+            print(f"  Source index skipped ({json_path.name}): {error}")
             continue
+        required = ("url", "title", "retrieved_at")
+        if any(not metadata.get(field) for field in required):
+            print(f"  Source index skipped (missing metadata): {json_path.name}")
+            continue
+        slug = slug_from_url(metadata["url"])
+        relative_markdown = Path("data") / "standardized" / "news" / f"{slug}.md"
+        standardized = read_front_matter(REPO_ROOT / relative_markdown)
         rows.append(
             {
-                "doc_id": metadata["doc_id"],
-                "file_path": source_file_path(markdown_path),
-                "title": metadata["title"],
-                "source_url": metadata["source_url"],
-                "retrieved_at": metadata["retrieved_at"],
-                "document_version": metadata.get("document_version", "not-stated"),
+                "doc_id": standardized.get("doc_id", f"uit-news-{slug}"),
+                "file_path": relative_markdown.as_posix(),
+                "title": standardized.get("title", metadata["title"]),
+                "source_url": standardized.get("source_url", metadata["url"]),
+                "retrieved_at": standardized.get(
+                    "retrieved_at", metadata["retrieved_at"]
+                ),
+                "document_version": standardized.get("document_version", "not-stated"),
                 "license_or_permission": "public-page",
-                "cleaning_version": metadata.get(
-                    "cleaning_version", "markitdown-v1"
+                "cleaning_version": standardized.get(
+                    "cleaning_version",
+                    "markitdown-html-v2"
+                    if metadata.get("content_html")
+                    else "markitdown-v1",
                 ),
             }
         )
 
+    rows.sort(key=lambda row: row["file_path"])
     source_path = output_dir / "source.csv"
-    with source_path.open("w", encoding="utf-8", newline="") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=SOURCE_CSV_FIELDS)
+    with source_path.open("w", encoding="utf-8-sig", newline="") as csv_file:
+        writer = csv.DictWriter(
+            csv_file,
+            fieldnames=SOURCE_CSV_FIELDS,
+            quoting=csv.QUOTE_ALL,
+        )
         writer.writeheader()
         writer.writerows(rows)
     return source_path, len(rows)
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Crawl UIT news to Markdown")
+    parser = argparse.ArgumentParser(description="Crawl UIT news to landing JSON")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=5,
+        help="Maximum number of newest articles to retain (default: 5)",
+    )
     parser.add_argument(
         "--pages",
         type=int,
@@ -290,11 +277,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--rebuild-source-csv",
         action="store_true",
-        help="Only rebuild source.csv from existing Markdown files",
+        help="Only rebuild source.csv from existing JSON snapshots",
     )
     args = parser.parse_args()
     if args.pages < 1:
         parser.error("--pages must be at least 1")
+    if args.limit < 1:
+        parser.error("--limit must be at least 1")
     if args.delay < 0:
         parser.error("--delay cannot be negative")
     return args
@@ -304,12 +293,12 @@ def main() -> None:
     args = parse_args()
     if args.rebuild_source_csv:
         source_path, row_count = rebuild_source_csv(args.output)
-        print(f"Done: indexed {row_count} Markdown file(s) in {source_path.resolve()}")
+        print(f"Done: indexed {row_count} JSON snapshot(s) in {source_path.resolve()}")
         return
 
-    saved = crawl(args.pages, args.output, args.delay)
+    saved = crawl(args.pages, args.limit, args.output, args.delay)
     source_path, row_count = rebuild_source_csv(args.output)
-    print(f"Done: saved {saved} Markdown file(s) to {args.output.resolve()}")
+    print(f"Done: saved {saved} JSON snapshot(s) to {args.output.resolve()}")
     print(f"Source index: {row_count} row(s) in {source_path.resolve()}")
 
 
