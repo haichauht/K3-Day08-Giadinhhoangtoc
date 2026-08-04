@@ -1,83 +1,163 @@
-"""
-Task 6 — Lexical Search Module (BM25).
+"""Task 6 - Vietnamese-aware BM25 lexical retrieval."""
 
-Mặc định sử dụng BM25. Nếu dùng phương pháp khác (TF-IDF, Elasticsearch,
-Weaviate BM25 built-in), hãy giải thích cơ chế trong buổi demo → +5 bonus.
+from __future__ import annotations
 
-Cài đặt:
-    pip install rank-bm25
+import re
+import unicodedata
 
-BM25 hoạt động thế nào:
-    - Term Frequency (TF): từ xuất hiện nhiều trong document → điểm cao
-    - Inverse Document Frequency (IDF): từ hiếm → quan trọng hơn
-    - Document length normalization: document dài không bị ưu tiên quá mức
-    - Formula: score(q,d) = Σ IDF(qi) * (tf(qi,d) * (k1+1)) / (tf(qi,d) + k1*(1-b+b*|d|/avgdl))
-    - k1=1.5 (term saturation), b=0.75 (length normalization)
-"""
+import numpy as np
+from rank_bm25 import BM25Okapi
 
-from pathlib import Path
+from .task4_chunking_indexing import chunk_documents, load_documents
 
-# TODO: Load corpus từ data/standardized/ hoặc từ vector store
-CORPUS: list[dict] = []  # List of {'content': str, 'metadata': dict}
+CORPUS: list[dict] = []
+_BM25 = None
+
+# High-frequency function words dominated several Vietnamese BM25 queries
+# (for example "học phí ... được thu và tính như thế nào").  Removing them
+# lets domain terms such as "học phí" and "tín chỉ" drive the score.
+VI_STOPWORDS = {
+    "ai",
+    "bao",
+    "bằng",
+    "bị",
+    "các",
+    "cách",
+    "cho",
+    "có",
+    "của",
+    "do",
+    "đã",
+    "đang",
+    "để",
+    "đó",
+    "được",
+    "gì",
+    "khi",
+    "không",
+    "là",
+    "làm",
+    "một",
+    "nào",
+    "như",
+    "những",
+    "ra",
+    "sau",
+    "sẽ",
+    "thì",
+    "theo",
+    "thế",
+    "trong",
+    "trên",
+    "từ",
+    "và",
+    "vào",
+    "về",
+    "với",
+}
+
+# UIT users occasionally mix English terms into Vietnamese questions.  BM25
+# cannot bridge languages by itself, so expand a deliberately small set of
+# domain terms before scoring.  The original tokens remain in the query.
+ENGLISH_QUERY_ALIASES = {
+    "eligibility": ("điều", "kiện"),
+    "fee": ("học", "phí"),
+    "library": ("thư", "viện"),
+    "room": ("phòng",),
+    "scholarship": ("học", "bổng"),
+    "study": ("học",),
+    "tuition": ("học", "phí"),
+}
+
+
+def tokenize(text: str) -> list[str]:
+    """Tokenize Unicode text and add accent-free forms plus adjacent bigrams."""
+    words = [
+        word
+        for word in re.findall(r"[^\W_]+", text.lower(), flags=re.UNICODE)
+        if word not in VI_STOPWORDS
+    ]
+    expanded: list[str] = []
+    for word in words:
+        expanded.append(word)
+        plain = "".join(
+            char
+            for char in unicodedata.normalize("NFD", word.replace("đ", "d"))
+            if unicodedata.category(char) != "Mn"
+        )
+        if plain != word:
+            expanded.append(plain)
+    # Phrase tokens reward exact concepts such as "tốt nghiệp" and "song ngành".
+    expanded.extend(f"{words[i]}_{words[i + 1]}" for i in range(len(words) - 1))
+    return expanded
+
+
+def tokenize_query(text: str) -> list[str]:
+    """Tokenize a query and expand common English university-service terms."""
+    tokens = tokenize(text)
+    words = re.findall(r"[^\W_]+", text.casefold(), flags=re.UNICODE)
+    aliases = [term for word in words for term in ENGLISH_QUERY_ALIASES.get(word, ())]
+    if aliases:
+        tokens.extend(tokenize(" ".join(aliases)))
+    return tokens
 
 
 def build_bm25_index(corpus: list[dict]):
-    """
-    Xây dựng BM25 index từ corpus.
+    """Build Okapi BM25 (k1=1.5, b=0.75) for the supplied chunks."""
+    if not corpus:
+        return None
 
-    Args:
-        corpus: List of {'content': str, 'metadata': dict}
-    """
-    # TODO: Implement BM25 index
-    #
-    # from rank_bm25 import BM25Okapi
-    #
-    # # Tokenize - có thể đơn giản split(), hoặc dùng underthesea cho tiếng Việt
-    # tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
-    # bm25 = BM25Okapi(tokenized_corpus)
-    # return bm25
-    raise NotImplementedError("Implement build_bm25_index")
+    def searchable_text(item: dict) -> str:
+        metadata = item.get("metadata", {})
+        # Headings carry decisive intent (for example the difference between
+        # remote-training tuition and dual-degree tuition). Repeat the section
+        # once as a light field boost without requiring a separate BM25F index.
+        section = str(metadata.get("section", ""))
+        return "\n".join(
+            [str(metadata.get("title", "")), section, section, item["content"]]
+        )
+
+    return BM25Okapi(
+        [tokenize(searchable_text(item)) for item in corpus],
+        k1=1.5,
+        b=0.75,
+    )
+
+
+def get_bm25_index():
+    global CORPUS, _BM25
+    if _BM25 is None:
+        CORPUS = chunk_documents(load_documents())
+        _BM25 = build_bm25_index(CORPUS)
+    return _BM25
 
 
 def lexical_search(query: str, top_k: int = 10) -> list[dict]:
-    """
-    Tìm kiếm từ khóa sử dụng BM25.
-
-    Args:
-        query: Câu truy vấn
-        top_k: Số lượng kết quả tối đa
-
-    Returns:
-        List of {
-            'content': str,
-            'score': float,      # BM25 score
-            'metadata': dict
-        }
-        Sorted by score descending.
-    """
-    # TODO: Implement lexical search
-    #
-    # tokenized_query = query.lower().split()
-    # scores = bm25.get_scores(tokenized_query)
-    #
-    # # Get top_k indices
-    # import numpy as np
-    # top_indices = np.argsort(scores)[::-1][:top_k]
-    #
-    # results = []
-    # for idx in top_indices:
-    #     if scores[idx] > 0:
-    #         results.append({
-    #             "content": CORPUS[idx]["content"],
-    #             "score": float(scores[idx]),
-    #             "metadata": CORPUS[idx]["metadata"]
-    #         })
-    # return results
-    raise NotImplementedError("Implement lexical_search")
+    """Return chunks ranked by raw BM25 score, descending."""
+    if not query.strip() or top_k <= 0:
+        return []
+    bm25 = get_bm25_index()
+    if bm25 is None:
+        return []
+    scores = np.asarray(bm25.get_scores(tokenize_query(query)), dtype=float)
+    ranked = np.argsort(scores)[::-1]
+    results: list[dict] = []
+    for index in ranked:
+        score = float(scores[index])
+        if score <= 0:
+            continue
+        results.append(
+            {
+                "content": CORPUS[int(index)]["content"],
+                "score": round(score, 6),
+                "metadata": CORPUS[int(index)]["metadata"],
+            }
+        )
+        if len(results) >= top_k:
+            break
+    return results
 
 
 if __name__ == "__main__":
-    # Test
-    results = lexical_search("tuition fee payment methods", top_k=5)
-    for r in results:
-        print(f"[{r['score']:.3f}] {r['content'][:100]}...")
+    for result in lexical_search("điều kiện xét tốt nghiệp", top_k=5):
+        print(f"[{result['score']:.3f}] {result['metadata'].get('source')}")
