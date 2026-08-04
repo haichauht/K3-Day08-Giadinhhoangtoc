@@ -1,0 +1,182 @@
+{
+  "dense_api_only::legal-credit-learner-rights::eb1ccf8acc96b9ff7b9127174b43a21287a918f4": {
+    "faithfulness": 0.875,
+    "answer_relevancy": 0.82221,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::legal-credit-process::733c44a35afa8c3b6d948a1755d56bab4b33c328": {
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.830815,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::legal-credit-similarity::9091e03f6debab59c1bdef3e06369927416d68bb": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.593774,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::legal-dual-registration::ca7924e9bfae5ec06d24006d8e748d7d5fdb57a4": {
+    "faithfulness": 0.625,
+    "answer_relevancy": 0.673346,
+    "context_recall": 1.0,
+    "context_precision": 0.7
+  },
+  "dense_api_only::legal-dual-tuition::2ed166221bb4ad798ecca9c46a2debbd2d5f8401": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.929328,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::legal-remote-degree-deadline::60d5a0cc80bf876d591340869924a5d58c73fc32": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.953384,
+    "context_recall": 1.0,
+    "context_precision": 0.755556
+  },
+  "dense_api_only::legal-remote-grade-improvement::101043bfd5e4d0fd5caa7275f9123da5980c2bca": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.843508,
+    "context_recall": 1.0,
+    "context_precision": 0.7
+  },
+  "dense_api_only::legal-remote-graduation::82d16d2c835f79721327053380990dc46a388326": {
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.0,
+    "context_recall": 0.0,
+    "context_precision": 0.0
+  },
+  "dense_api_only::legal-remote-max-duration::2cdbd4115cdac053ba566956109ce9013d617725": {
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.966521,
+    "context_recall": 0.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::legal-remote-study-pause::e385a0a1777a647cff00953857028160e9f04ce6": {
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.654586,
+    "context_recall": 0.0,
+    "context_precision": 0.0
+  },
+  "dense_api_only::legal-remote-tuition::fc850de7b5fc53b448e2b666784774982f30a3fc": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.0,
+    "context_recall": 0.0,
+    "context_precision": 0.0
+  },
+  "dense_api_only::news-ai-training::26a13e616c2e409a6c1b8bfed26a8cfb4be4620c": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.861114,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "dense_api_only::news-michael-wu-seminar::14b24397f5346e011992dc55f3e76b51ba34df99": {
+    "faithfulness": 0.333333,
+    "answer_relevancy": 0.0,
+    "context_recall": 0.333333,
+    "context_precision": 0.5
+  },
+  "dense_api_only::news-party-conference::be5083d5aab0a9fd123a73792fd8bdc90dd6d92e": {
+    "faithfulness": 0.625,
+    "answer_relevancy": 0.849378,
+    "context_recall": 0.75,
+    "context_precision": 0.8875
+  },
+  "dense_api_only::news-summer-program::f5a4c2c6673b58bd5430e31f45d8c71d289be278": {
+    "faithfulness": 0.75,
+    "answer_relevancy": 0.630574,
+    "context_recall": 1.0,
+    "context_precision": 0.805556
+  },
+  "hybrid_api_rrf_rerank::legal-credit-learner-rights::1d5109dfe73534e59df7f3a3406e391df06d1a34": {
+    "faithfulness": 0.875,
+    "answer_relevancy": 0.980271,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-credit-process::526572b57b8ea5eb0772317b21dec559a8e0b646": {
+    "faithfulness": 0.142857,
+    "answer_relevancy": 0.71097,
+    "context_recall": 1.0,
+    "context_precision": 0.5
+  },
+  "hybrid_api_rrf_rerank::legal-credit-similarity::5d782c24d1b9a1cc44c5a9389690e6db21f69141": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 1.0,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-dual-registration::403c981786ff4f9c6ecf53d3840cd965cc9c9269": {
+    "faithfulness": 0.25,
+    "answer_relevancy": 1.0,
+    "context_recall": 1.0,
+    "context_precision": 0.75
+  },
+  "hybrid_api_rrf_rerank::legal-dual-tuition::3acb06209e134c019d0855476644673bc07c4771": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.929328,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-remote-degree-deadline::e0112e2b16dbb8137bc051f54392b8cf685b7ba1": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.953722,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-remote-grade-improvement::f5999c9d509b5a9e415bfb7f8a8ac470100498fa": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.757173,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-remote-graduation::3b34b73cbf491ec6745d6ee1b94b977804e5bc4d": {
+    "faithfulness": 0.8,
+    "answer_relevancy": 0.797811,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-remote-max-duration::1d1397c669bb99998eea69a83f758fef11cc4e7f": {
+    "faithfulness": 0.333333,
+    "answer_relevancy": 0.966277,
+    "context_recall": 1.0,
+    "context_precision": 0.5
+  },
+  "hybrid_api_rrf_rerank::legal-remote-study-pause::240b4e9b7fc3f6568dae3fcfab119f288a32cea5": {
+    "faithfulness": 0.2,
+    "answer_relevancy": 0.850299,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::legal-remote-tuition::8418c482a5166b3a6c2e68abd4737872d4550d1d": {
+    "faithfulness": 0.571429,
+    "answer_relevancy": 0.645858,
+    "context_recall": 1.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::news-ai-training::df2fbdd8d1b3772b6ba27af5ed03ff52d84111aa": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.858935,
+    "context_recall": 0.25,
+    "context_precision": 0.5
+  },
+  "hybrid_api_rrf_rerank::news-michael-wu-seminar::a8af528583668e3ef12517edceaaa3a7da42b553": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.878323,
+    "context_recall": 1.0,
+    "context_precision": 0.0
+  },
+  "hybrid_api_rrf_rerank::news-party-conference::b03565dce7e3514143620ce6b9d8b6d6689dd02c": {
+    "faithfulness": 0.888889,
+    "answer_relevancy": 0.900871,
+    "context_recall": 0.0,
+    "context_precision": 1.0
+  },
+  "hybrid_api_rrf_rerank::news-summer-program::57f443846f1fc4cd0a32827a613e074184e7ed43": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.70177,
+    "context_recall": 1.0,
+    "context_precision": 0.805556
+  }
+}

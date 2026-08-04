@@ -1,17 +1,137 @@
 [
   {
-    "question": "Học phí hàng năm của chương trình Business tại RMIT Vietnam là bao nhiêu?",
-    "expected_answer": "Khoảng 375.840.000 VND mỗi năm (tùy chương trình cụ thể).",
-    "expected_context": "Trang Tuition Fees, mục Undergraduate Programs"
+    "id": "legal-remote-graduation",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 21: điều kiện xét và công nhận tốt nghiệp",
+    "question": "Điều kiện xét tốt nghiệp chương trình đào tạo từ xa của UIT là gì?",
+    "expected_answer": "Sinh viên không đang bị truy cứu trách nhiệm hình sự hoặc kỷ luật từ đình chỉ học tập trở lên, đã hoàn thành nghĩa vụ học phí, hoàn thành các môn học và tích lũy đủ tín chỉ theo chương trình.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 21. Điều kiện xét tốt nghiệp và công nhận tốt nghiệp",
+    "expected_keywords": ["truy cứu trách nhiệm hình sự", "hoàn thành nghĩa vụ học phí", "tích lũy đủ số tín chỉ"]
   },
   {
-    "question": "Học phí được thanh toán theo hình thức nào?",
-    "expected_answer": "Thanh toán theo từng học kỳ, tính theo từng môn học đã đăng ký.",
-    "expected_context": "Trang Tuition Fees, mục Payment Structure"
+    "id": "legal-remote-max-duration",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 10: thời gian tối đa hoàn thành chương trình",
+    "question": "Thời gian tối đa để hoàn thành chương trình đào tạo từ xa là bao lâu?",
+    "expected_answer": "Thời gian tối đa không vượt quá hai lần thời gian theo kế hoạch học tập chuẩn toàn khóa.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 10. Khóa học",
+    "expected_keywords": ["không vượt quá 02 lần", "kế hoạch học tập chuẩn toàn khoá"]
   },
   {
-    "question": "Trường có cung cấp ký túc xá trong khuôn viên không?",
-    "expected_answer": "Không — trường không cung cấp chỗ ở trong khuôn viên, nhưng có đội ngũ hỗ trợ sinh viên tìm chỗ ở gần trường.",
-    "expected_context": "Trang Accommodation Services"
+    "id": "legal-remote-tuition",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 11: nguyên tắc xác định và thu học phí",
+    "question": "Học phí đào tạo từ xa được thu và tính như thế nào?",
+    "expected_answer": "Học phí được thu theo từng học kỳ, bằng học phí tín chỉ học mới cộng học lại và học cải thiện, mỗi loại nhân với tổng số tín chỉ tương ứng.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 11. Nguyên tắc xác định học phí",
+    "expected_keywords": ["thu theo từng học kỳ", "HPTCHM", "HPTCHL", "HPTCCT"]
+  },
+  {
+    "id": "legal-remote-grade-improvement",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 15: học lại và học cải thiện",
+    "question": "Sinh viên đào tạo từ xa học cải thiện thì kết quả nào được dùng tính điểm tích lũy?",
+    "expected_answer": "Sinh viên được học lại môn đã đạt để cải thiện điểm; kết quả cao nhất trong các lần học được dùng tính điểm trung bình chung tích lũy và toàn khóa.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 15. Đăng ký học tập, học lại và học cải thiện",
+    "expected_keywords": ["kết quả cao nhất", "điểm trung bình chung tích lũy", "điểm trung bình tích lũy toàn khóa"]
+  },
+  {
+    "id": "legal-remote-study-pause",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 17: điều kiện tạm dừng học vì lý do cá nhân",
+    "question": "Sinh viên đào tạo từ xa được tạm dừng học vì lý do cá nhân trong điều kiện nào?",
+    "expected_answer": "Sinh viên phải đã học ít nhất một học kỳ, không thuộc trường hợp bị đình chỉ học tập, đồng thời có xác nhận của gia đình và giấy tờ liên quan hợp lệ.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 17. Thôi học, tạm dừng học tập",
+    "expected_keywords": ["học ít nhất một học kỳ", "không rơi vào các trường hợp bị đình chỉ", "xác nhận của gia đình"]
+  },
+  {
+    "id": "legal-remote-degree-deadline",
+    "expected_context": "quy-che-dao-tao-tu-xa-uit.md, Điều 21: thời hạn cấp bằng sau công nhận tốt nghiệp",
+    "question": "Sau quyết định công nhận tốt nghiệp, sinh viên được cấp bằng trong thời hạn bao lâu?",
+    "expected_answer": "Sinh viên được cấp bằng trong 30 ngày tính từ ngày có quyết định công nhận tốt nghiệp.",
+    "expected_source": "quy-che-dao-tao-tu-xa-uit.md",
+    "expected_section": "Điều 21. Điều kiện xét tốt nghiệp và công nhận tốt nghiệp",
+    "expected_keywords": ["thời hạn 30 ngày", "quyết định công nhận tốt nghiệp"]
+  },
+  {
+    "id": "legal-credit-similarity",
+    "expected_context": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md, Điều 4: ngưỡng tương đồng tối thiểu",
+    "question": "Mức độ tương đồng tối thiểu để công nhận và chuyển đổi tín chỉ là bao nhiêu?",
+    "expected_answer": "Vi học phần, khối học phần hoặc môn học phải đạt mức độ tương đồng từ 70%.",
+    "expected_source": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md",
+    "expected_section": "Điều 4. Quy trình xây dựng khối học phần công nhận, chuyển đổi tín chỉ",
+    "expected_keywords": ["mức độ tương đồng", "tỷ lệ từ 70%"]
+  },
+  {
+    "id": "legal-credit-learner-rights",
+    "expected_context": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md, Điều 8: quyền và trách nhiệm của người học",
+    "question": "Người học có những quyền và trách nhiệm gì khi chuyển đổi tín chỉ?",
+    "expected_answer": "Người học được tiếp cận tài liệu và giải đáp thắc mắc, được đăng ký học để xét công nhận hoặc chuyển đổi tín chỉ, và phải tuân thủ quy định học vụ của cơ sở đào tạo.",
+    "expected_source": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md",
+    "expected_section": "Điều 8. Quyền và trách nhiệm của người học",
+    "expected_keywords": ["tiếp cận các nguồn tài liệu", "được đăng ký", "tuân thủ các quy định học vụ"]
+  },
+  {
+    "id": "legal-credit-process",
+    "expected_context": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md, Điều 4: quy trình xây dựng khối học phần chuyển đổi tín chỉ",
+    "question": "Quy trình xây dựng khối học phần để công nhận chuyển đổi tín chỉ gồm các việc chính nào?",
+    "expected_answer": "Quy trình gồm đối sánh môn học có kiến thức tương đồng, xác định vi học phần, xây dựng mô tả và đề cương, phân tích môn học theo vi học phần, rồi lập ma trận tỷ lệ tương đương và mức độ công nhận.",
+    "expected_source": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.md",
+    "expected_section": "Điều 4. Quy trình xây dựng khối học phần công nhận, chuyển đổi tín chỉ",
+    "expected_keywords": ["đối sánh", "xác định các vi học phần", "bảng ma trận tỷ lệ tương đương"]
+  },
+  {
+    "id": "legal-dual-registration",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 6: điều kiện đăng ký học song ngành",
+    "question": "Điều kiện để sinh viên đăng ký học song ngành tại ĐHQG-HCM là gì?",
+    "expected_answer": "Người đăng ký phải là sinh viên hệ chính quy tập trung của ĐHQG-HCM, ngành thứ hai khác ngành thứ nhất, đã hoàn thành năm học đầu tiên và có học lực từ trung bình khá trở lên.",
+    "expected_source": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md",
+    "expected_section": "Điều 6. Điều kiện đăng ký học song ngành",
+    "expected_keywords": ["hệ chính quy tập trung", "khác chương trình đào tạo ngành thứ nhất", "hoàn thành năm học đầu tiên", "trung bình khá trở lên"]
+  },
+  {
+    "id": "legal-dual-tuition",
+    "expected_context": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md, Điều 9: học phí chương trình song ngành",
+    "question": "Học phí của sinh viên học song ngành được xác định ra sao?",
+    "expected_answer": "Học phí là tổng học phí các môn của ngành thứ nhất và các môn ngành thứ hai sinh viên đăng ký; môn thuộc ngành nào áp dụng mức học phí của cơ sở quản lý ngành đó, sau khi loại phần trùng hoặc tương đương theo quy định.",
+    "expected_source": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.md",
+    "expected_section": "Điều 9. Công tác tài chính",
+    "expected_keywords": ["tổng học phí", "chương trình đào tạo ngành thứ nhất", "chương trình đào tạo ngành thứ hai"]
+  },
+  {
+    "id": "news-michael-wu-seminar",
+    "expected_context": "Bài tin UIT về seminar của PGS.TS. Chung-Tse Michael Wu: chủ đề, thời gian và địa điểm",
+    "question": "Seminar của PGS.TS. Chung-Tse Michael Wu tại UIT có chủ đề, thời gian và địa điểm nào?",
+    "expected_answer": "Seminar có chủ đề Sensing, Tracking, and Secured Communication with Artificial Electromagnetic Materials, diễn ra 08:45–09:45 ngày 3/8/2026 tại phòng C110, UIT.",
+    "expected_source": "chao-mung-pgsts-chung-tse-michael-wu-den-voi-truong-dai-hoc-cong-nghe-thong-tin-mo-rong-ket-noi-hoc-thuat-voi-dai-hoc-quoc-gia-dai-loan.md",
+    "expected_section": "Chào mừng PGS.TS. Chung-Tse Michael Wu",
+    "expected_keywords": ["Sensing, Tracking", "08:45", "3/8/2026", "Phòng C110"]
+  },
+  {
+    "id": "news-party-conference",
+    "expected_context": "Bài tin UIT về thời gian và mục tiêu Hội nghị Đảng viên lần 1 năm 2026",
+    "question": "Hội nghị Đảng viên lần 1 năm 2026 của UIT tổ chức khi nào và nhằm mục đích gì?",
+    "expected_answer": "Hội nghị diễn ra sáng 30/7/2026 để nhìn lại sáu tháng đầu năm, triển khai trọng tâm xây dựng Đảng và định hướng nhiệm vụ giai đoạn tiếp theo.",
+    "expected_source": "dang-bo-truong-dai-hoc-cong-nghe-thong-tin-to-chuc-hoi-nghi-dang-vien-lan-1-nam-2026.md",
+    "expected_section": "Đảng bộ Trường Đại học Công nghệ Thông tin tổ chức Hội nghị Đảng viên lần 1 năm 2026",
+    "expected_keywords": ["Sáng ngày 30/7", "6 tháng đầu năm", "công tác xây dựng Đảng", "định hướng nhiệm vụ"]
+  },
+  {
+    "id": "news-summer-program",
+    "expected_context": "Bài tin UIT về Huỳnh Ngọc Bảo và chương trình ASEAN Summer @NTU 2026",
+    "question": "Huỳnh Ngọc Bảo tham gia chương trình nào tại Singapore và Indonesia, trong bao lâu?",
+    "expected_answer": "Bảo tham gia ASEAN Summer @NTU Programme 2026 tại Singapore và Indonesia trong 18 ngày.",
+    "expected_source": "tu-uit-den-singapore-va-indonesia-18-ngay-de-nhin-the-gioi-rong-hon.md",
+    "expected_section": "TỪ UIT ĐẾN SINGAPORE VÀ INDONESIA",
+    "expected_keywords": ["ASEAN Summer @NTU Programme 2026", "18 ngày", "Singapore", "Indonesia"]
+  },
+  {
+    "id": "news-ai-training",
+    "expected_context": "Bài tin UIT về lớp tập huấn AI tháng 7/2026 dành cho chuyên viên",
+    "question": "Lớp tập huấn ứng dụng AI cho chuyên viên UIT diễn ra khi nào và tập trung vào nội dung gì?",
+    "expected_answer": "Lớp diễn ra hai ngày 28–29/7/2026, lấy thực hành làm trọng tâm, gồm AI tạo sinh, viết prompt, soạn thảo, tóm tắt, dịch thuật, kiểm chứng thông tin, phân tích dữ liệu, lập kế hoạch và thiết kế trình bày.",
+    "expected_source": "uit-to-chuc-lop-tap-huan-ung-dung-ai-danh-cho-chuyen-vien-nam-2026-nang-cao-nang-luc-so-toi-uu-hieu-qua-cong-viec.md",
+    "expected_section": "UIT tổ chức Lớp tập huấn Ứng dụng AI dành cho Chuyên viên",
+    "expected_keywords": ["28 - 29/7/2026", "thực hành làm trọng tâm", "AI tạo sinh", "kỹ thuật xây dựng prompt"]
   }
 ]
