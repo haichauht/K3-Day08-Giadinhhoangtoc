@@ -1,64 +1,81 @@
-"""
-Task 5 — Semantic Search Module.
+"""Task 5 - Dense semantic search over the Task 4 Chroma indexes."""
 
-Viết module tìm kiếm ngữ nghĩa (dense retrieval) trên vector store.
+from __future__ import annotations
 
-Yêu cầu:
-    - Input: query string + top_k
-    - Output: danh sách chunks có score, sorted descending
-    - Phải tương thích với embedding model và vector store ở Task 4
-"""
+import requests
+
+from .task4_chunking_indexing import (
+    COLLECTION_NAME,
+    LOCAL_COLLECTION_NAME,
+    chunk_documents,
+    embed_chunks,
+    embed_texts_local,
+    embed_texts_nvidia,
+    get_collection,
+    index_to_vectorstore,
+    load_documents,
+    run_pipeline,
+)
 
 
-def semantic_search(query: str, top_k: int = 10) -> list[dict]:
-    """
-    Tìm kiếm ngữ nghĩa sử dụng vector similarity.
+def _query_collection(query: str, top_k: int, backend: str) -> list[dict]:
+    from chromadb.errors import NotFoundError
 
-    Args:
-        query: Câu truy vấn
-        top_k: Số lượng kết quả tối đa
+    collection_name = COLLECTION_NAME if backend == "nvidia" else LOCAL_COLLECTION_NAME
+    try:
+        collection = get_collection(collection_name)
+    except NotFoundError:
+        if backend == "nvidia":
+            run_pipeline(with_local_fallback=False)
+        else:
+            chunks = chunk_documents(load_documents())
+            local_chunks = embed_chunks(chunks, backend="local")
+            index_to_vectorstore(local_chunks, LOCAL_COLLECTION_NAME)
+        collection = get_collection(collection_name)
 
-    Returns:
-        List of {
-            'content': str,      # Nội dung chunk
-            'score': float,      # Cosine similarity score
-            'metadata': dict     # source, doc_type, chunk_index
-        }
-        Sorted by score descending.
-    """
-    # TODO: Implement semantic search
-    #
-    # Bước 1: Embed query bằng cùng model ở Task 4
-    # Bước 2: Query vector store (cosine similarity)
-    # Bước 3: Return top_k results
-    #
-    # Ví dụ với ChromaDB:
-    # from .task4_chunking_indexing import get_collection, get_embedding_model
-    #
-    # model = get_embedding_model()
-    # query_vector = model.encode(query).tolist()
-    #
-    # collection = get_collection()
-    # results = collection.query(
-    #     query_embeddings=[query_vector],
-    #     n_results=top_k,
-    #     include=["documents", "metadatas", "distances"],
-    # )
-    #
-    # output = []
-    # for doc, meta, dist in zip(
-    #     results["documents"][0], results["metadatas"][0], results["distances"][0]
-    # ):
-    #     score = max(0.0, 1.0 - dist)  # cosine distance → similarity
-    #     output.append({"content": doc, "score": round(score, 4), "metadata": meta})
-    #
-    # output.sort(key=lambda x: x["score"], reverse=True)
-    # return output[:top_k]
-    raise NotImplementedError("Implement semantic_search")
+    embed = embed_texts_nvidia if backend == "nvidia" else embed_texts_local
+    query_vector = embed([query], input_type="query")[0]
+    n_results = min(max(1, top_k), collection.count())
+    response = collection.query(
+        query_embeddings=[query_vector],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"],
+    )
+    output: list[dict] = []
+    for content, metadata, distance in zip(
+        response["documents"][0],
+        response["metadatas"][0],
+        response["distances"][0],
+        strict=True,
+    ):
+        similarity = max(0.0, min(1.0, 1.0 - float(distance)))
+        output.append(
+            {
+                "content": content,
+                "score": round(similarity, 6),
+                "metadata": metadata or {},
+                "embedding_backend": backend,
+            }
+        )
+    return sorted(output, key=lambda item: item["score"], reverse=True)[:top_k]
+
+
+def semantic_search(query: str, top_k: int = 10, backend: str = "auto") -> list[dict]:
+    """Return cosine-ranked chunks; API first, cached MiniLM on API failure."""
+    if not query.strip() or top_k <= 0:
+        return []
+    if backend in {"nvidia", "local"}:
+        return _query_collection(query, top_k, backend)
+    if backend != "auto":
+        raise ValueError("backend must be auto, nvidia, or local")
+    try:
+        return _query_collection(query, top_k, "nvidia")
+    except (requests.RequestException, RuntimeError, KeyError, ValueError):
+        return _query_collection(query, top_k, "local")
 
 
 if __name__ == "__main__":
-    # Test
-    results = semantic_search("what is the tuition fee", top_k=5)
-    for r in results:
-        print(f"[{r['score']:.3f}] {r['content'][:100]}...")
+    for result in semantic_search("Điều kiện xét tốt nghiệp", top_k=5):
+        print(f"[{result['score']:.3f}] {result['metadata'].get('source')}")
+    (chunk_documents,)
+    (embed_chunks,)
