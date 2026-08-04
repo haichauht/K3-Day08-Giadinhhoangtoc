@@ -50,10 +50,26 @@ Xem code mẫu (DeepEval/RAGAS/TruLens) chi tiết trong `README.md` gốc mục
 
 ### Deliverable Evaluation
 
-- [ ] File `group_project/evaluation/golden_dataset.json` — 15+ cặp Q&A
-- [ ] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation
-- [ ] File `group_project/evaluation/results.md` — bảng điểm + phân tích
-- [ ] So sánh A/B ít nhất 2 configs
+- [x] File `group_project/evaluation/golden_dataset.json` — 18 cặp Q&A (bám sát corpus thật: 3 văn bản pháp lý + 5 tin UIT)
+- [x] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation (RAGAS)
+- [x] File `group_project/evaluation/results.md` — bảng điểm + phân tích
+- [x] So sánh A/B: `hybrid_rerank` (Task 9 đầy đủ) vs `dense_only` (chỉ semantic search)
+
+**Lưu ý khi chạy lại (2 venv, xem `requirements-eval.txt`):** `ragas==0.1.21`
+xung đột phiên bản `openai` với các gói của pipeline chính (chromadb,
+sentence-transformers) nên phải tách 2 bước:
+
+```bash
+# Bước 1 — venv chính (sinh câu trả lời RAG cho từng config)
+source venv/Scripts/activate
+python -m group_project.evaluation.generate_rag_outputs
+
+# Bước 2 — venv_eval riêng (chấm điểm RAGAS + xuất results.md)
+python -m venv venv_eval
+source venv_eval/Scripts/activate
+pip install -r requirements-eval.txt
+python -m group_project.evaluation.eval_pipeline
+```
 
 ---
 
@@ -70,7 +86,91 @@ Xem code mẫu (DeepEval/RAGAS/TruLens) chi tiết trong `README.md` gốc mục
 ## Kiến Trúc Hệ Thống
 
 ```
-[Vẽ diagram kiến trúc ở đây]
+                                   ┌─────────────────────┐
+                                   │   Câu hỏi (query)   │
+                                   └──────────┬──────────┘
+                                              │
+                        ┌─────────────────────┴─────────────────────┐
+                        ▼                                           ▼
+           ┌─────────────────────────┐                 ┌─────────────────────────┐
+           │   Semantic Search        │                 │   Lexical Search        │
+           │   (Task 5)               │                 │   (Task 6)              │
+           │   BAAI/bge-m3 (1024-d)   │                 │   BM25 (rank-bm25)      │
+           │   cosine similarity      │                 │   keyword matching      │
+           │   → ChromaDB             │                 │   → data/standardized/  │
+           └────────────┬─────────────┘                 └────────────┬────────────┘
+                        │  giữ điểm cosine GỐC                        │
+                        └─────────────────────┬───────────────────────┘
+                                              ▼
+                               ┌───────────────────────────┐
+                               │   RRF Merge (Task 7)       │
+                               │   RRF(d) = Σ 1/(k+rank)    │
+                               │   k = 60                   │
+                               └─────────────┬───────────────┘
+                                              ▼
+                               ┌───────────────────────────┐
+                               │   Rerank (Task 7)          │
+                               │   RRF / MMR / Cross-Encoder│
+                               └─────────────┬───────────────┘
+                                              ▼
+                               ┌───────────────────────────┐
+                       ┌───────┤  cosine gốc < threshold?   │
+                       │ có    │  (SCORE_THRESHOLD, Task 9) │
+                       ▼       └─────────────┬───────────────┘
+        ┌───────────────────────────┐        │ không
+        │  PageIndex Fallback        │        │
+        │  (Task 8, vectorless)      │        │
+        └─────────────┬───────────────┘        │
+                       └───────────────┬─────────┘
+                                       ▼
+                        ┌───────────────────────────┐
+                        │   Reorder (Task 10)        │
+                        │   chống lost-in-the-middle │
+                        │   front + back[::-1]       │
+                        └─────────────┬───────────────┘
+                                      ▼
+                        ┌───────────────────────────┐
+                        │   Format Context + Prompt  │
+                        │   (Task 10)                │
+                        └─────────────┬───────────────┘
+                                      ▼
+                        ┌───────────────────────────┐
+                        │   LLM Generation            │
+                        │   OpenRouter / OpenAI       │
+                        │   + Citation bắt buộc       │
+                        └─────────────┬───────────────┘
+                                      ▼
+                        ┌───────────────────────────┐
+                        │   Câu trả lời + Sources     │
+                        │   (app.py — Streamlit UI)   │
+                        └───────────────────────────┘
+```
+
+**Data pipeline (thu thập → chuẩn hoá → index):**
+```
+data/landing/legal/*.pdf  ─┐
+                            ├─► Task 3 (MarkItDown) ─► data/standardized/*.md ─► Task 4
+data/landing/news/*.md    ─┘                                                    (chunk 800/100,
+                                                                                   embed bge-m3,
+                                                                                   index ChromaDB)
+```
+
+**Evaluation pipeline (RAGAS, so sánh A/B):**
+```
+golden_dataset.json (18 câu) ─► generate_rag_outputs.py (venv chính)
+        │                              │
+        │                    ┌─────────┴─────────┐
+        │                    ▼                   ▼
+        │         rag_outputs_hybrid_rerank   rag_outputs_dense_only
+        │              (Config A)                (Config B)
+        │                    │                   │
+        └────────────────────┴─────────┬─────────┘
+                                        ▼
+                        eval_pipeline.py (venv_eval, RAGAS)
+                        Faithfulness / Answer Relevance /
+                        Context Recall / Context Precision
+                                        ▼
+                                  results.md
 ```
 
 ---

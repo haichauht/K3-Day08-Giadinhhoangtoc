@@ -22,9 +22,35 @@ không phải lỗi của bạn, đó là cấu hình WAF/Cloudflare phía serve
 thay vì cố vượt qua, và chỉ dùng nguồn công khai/được phép chia sẻ.
 """
 
+import json
+from datetime import datetime, timezone
 from pathlib import Path
 
+import requests
+
 DATA_DIR = Path(__file__).parent.parent / "data" / "landing" / "legal"
+SOURCES_PATH = DATA_DIR / "sources.json"
+
+# Văn bản pháp lý/quy định học vụ công khai của UIT / ĐHQG-HCM (daa.uit.edu.vn).
+LEGAL_DOCS = [
+    {
+        "title": "Quy định đào tạo song ngành trình độ đại học của ĐHQG-HCM",
+        "url": "https://daa.uit.edu.vn/sites/daa/files/202310/1195-qd-dhqg_27-9-2019_quy_dinh_dao_tao_song_nganh_dhqg.pdf",
+        "filename": "quy-dinh-dao-tao-song-nganh-dhqg-hcm.pdf",
+    },
+    {
+        "title": "Quy chế đào tạo từ xa trình độ đại học của UIT",
+        "url": "https://daa.uit.edu.vn/sites/daa/files/202412/507-qd-dhcntt-27-5-2024_quy_che_dao_tao_cho_sinh_vien.pdf",
+        "filename": "quy-che-dao-tao-tu-xa-uit.pdf",
+    },
+    {
+        "title": "Quy định công nhận và chuyển đổi tín chỉ tại ĐHQG-HCM",
+        "url": "https://daa.uit.edu.vn/sites/daa/files/202510/qd2062_221025_quy_dinh_khoi_hp_cong_nhanchuyen_doi_tin_chi.signed.pdf",
+        "filename": "quy-dinh-cong-nhan-chuyen-doi-tin-chi-dhqg-hcm.pdf",
+    },
+]
+
+USER_AGENT = "Mozilla/5.0 (compatible; UITLegalDocsCollector/1.0)"
 
 
 def setup_directory():
@@ -33,22 +59,39 @@ def setup_directory():
     print(f"✓ Thư mục đã sẵn sàng: {DATA_DIR}")
 
 
-# TODO: Tải file PDF/DOCX về DATA_DIR
-# Có thể tải thủ công hoặc viết script download nếu có direct link.
-#
-# Ví dụ nếu có direct link:
-#
-# import requests
-#
-# def download_file(url: str, filename: str):
-#     response = requests.get(url)
-#     filepath = DATA_DIR / filename
-#     filepath.write_bytes(response.content)
-#     print(f"✓ Đã tải: {filepath}")
-#
-# Nếu trang là HTML thuần (không phải PDF sẵn), có thể convert nội dung text
-# thành PDF đơn giản bằng thư viện fpdf2 (đã có trong requirements.txt).
+def download_file(url: str, filename: str) -> Path:
+    """Tải 1 file PDF về DATA_DIR, bỏ qua nếu đã tồn tại."""
+    filepath = DATA_DIR / filename
+    if filepath.exists():
+        print(f"  = Đã có sẵn, bỏ qua: {filepath.name}")
+        return filepath
+
+    response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+    response.raise_for_status()
+    filepath.write_bytes(response.content)
+    print(f"  Đã tải: {filepath.name} ({len(response.content):,} bytes)")
+    return filepath
+
+
+def collect_legal_docs() -> list[dict]:
+    """Tải toàn bộ LEGAL_DOCS về data/landing/legal/ và ghi provenance vào sources.json."""
+    setup_directory()
+
+    sources = []
+    for doc in LEGAL_DOCS:
+        filepath = download_file(doc["url"], doc["filename"])
+        sources.append({
+            "title": doc["title"],
+            "url": doc["url"],
+            "filename": doc["filename"],
+            "downloaded_at": datetime.now(timezone.utc).isoformat(),
+            "size_bytes": filepath.stat().st_size,
+        })
+
+    SOURCES_PATH.write_text(json.dumps(sources, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n✓ Saved provenance: {SOURCES_PATH}")
+    return sources
 
 
 if __name__ == "__main__":
-    setup_directory()
+    collect_legal_docs()

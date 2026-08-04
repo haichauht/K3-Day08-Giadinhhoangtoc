@@ -4,13 +4,19 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+venv_eval/
 *.egg-info/
 
 # Env (keys)
 .env
 
+# Vector store (regenerate với `python -m src.task4_chunking_indexing`)
+chroma_db/
+
 # Temp PDF conversion cache
 data/_tmp_pdf/
+data/pageindex_pdf/
+data/pageindex_doc_index.json
 
 # Temp / cache
 .pytest_cache/

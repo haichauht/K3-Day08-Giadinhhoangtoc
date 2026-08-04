@@ -17,8 +17,24 @@ BM25 hoạt động thế nào:
 
 from pathlib import Path
 
-# TODO: Load corpus từ data/standardized/ hoặc từ vector store
+STANDARDIZED_DIR = Path(__file__).parent.parent / "data" / "standardized"
+
+# Corpus + BM25 index được nạp lười (lazy) và cache lại, tránh đọc lại
+# data/standardized/ mỗi lần gọi lexical_search().
 CORPUS: list[dict] = []  # List of {'content': str, 'metadata': dict}
+_bm25_index = None
+
+
+def _load_corpus() -> list[dict]:
+    corpus = []
+    for md_file in sorted(STANDARDIZED_DIR.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+        doc_type = "legal" if "legal" in md_file.parts else "news"
+        corpus.append({
+            "content": content,
+            "metadata": {"source": md_file.name, "type": doc_type},
+        })
+    return corpus
 
 
 def build_bm25_index(corpus: list[dict]):
@@ -28,15 +44,22 @@ def build_bm25_index(corpus: list[dict]):
     Args:
         corpus: List of {'content': str, 'metadata': dict}
     """
-    # TODO: Implement BM25 index
-    #
-    # from rank_bm25 import BM25Okapi
-    #
-    # # Tokenize - có thể đơn giản split(), hoặc dùng underthesea cho tiếng Việt
-    # tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
-    # bm25 = BM25Okapi(tokenized_corpus)
-    # return bm25
-    raise NotImplementedError("Implement build_bm25_index")
+    from rank_bm25 import BM25Okapi
+
+    # Tokenize đơn giản bằng split() — đủ dùng cho demo; với tiếng Việt "chuẩn"
+    # hơn có thể thay bằng underthesea/pyvi word segmentation (bonus).
+    tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
+    return BM25Okapi(tokenized_corpus)
+
+
+def _get_index():
+    """Nạp CORPUS + build BM25 index 1 lần, cache lại cho các lần gọi sau."""
+    global CORPUS, _bm25_index
+    if _bm25_index is None:
+        CORPUS = _load_corpus()
+        if CORPUS:
+            _bm25_index = build_bm25_index(CORPUS)
+    return _bm25_index
 
 
 def lexical_search(query: str, top_k: int = 10) -> list[dict]:
@@ -55,25 +78,26 @@ def lexical_search(query: str, top_k: int = 10) -> list[dict]:
         }
         Sorted by score descending.
     """
-    # TODO: Implement lexical search
-    #
-    # tokenized_query = query.lower().split()
-    # scores = bm25.get_scores(tokenized_query)
-    #
-    # # Get top_k indices
-    # import numpy as np
-    # top_indices = np.argsort(scores)[::-1][:top_k]
-    #
-    # results = []
-    # for idx in top_indices:
-    #     if scores[idx] > 0:
-    #         results.append({
-    #             "content": CORPUS[idx]["content"],
-    #             "score": float(scores[idx]),
-    #             "metadata": CORPUS[idx]["metadata"]
-    #         })
-    # return results
-    raise NotImplementedError("Implement lexical_search")
+    import numpy as np
+
+    bm25 = _get_index()
+    if bm25 is None:
+        return []
+
+    tokenized_query = query.lower().split()
+    scores = bm25.get_scores(tokenized_query)
+
+    top_indices = np.argsort(scores)[::-1][:top_k]
+
+    results = []
+    for idx in top_indices:
+        if scores[idx] > 0:
+            results.append({
+                "content": CORPUS[idx]["content"],
+                "score": float(scores[idx]),
+                "metadata": CORPUS[idx]["metadata"],
+            })
+    return results
 
 
 if __name__ == "__main__":

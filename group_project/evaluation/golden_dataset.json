@@ -1,17 +1,92 @@
 [
   {
-    "question": "Học phí hàng năm của chương trình Business tại RMIT Vietnam là bao nhiêu?",
-    "expected_answer": "Khoảng 375.840.000 VND mỗi năm (tùy chương trình cụ thể).",
-    "expected_context": "Trang Tuition Fees, mục Undergraduate Programs"
+    "question": "Sinh viên cần đáp ứng điều kiện gì để được đăng ký học song ngành tại ĐHQG-HCM?",
+    "expected_answer": "Sinh viên phải đang học đại học hệ chính quy tập trung của ĐHQG-HCM, đăng ký chương trình ngành thứ hai khác với ngành thứ nhất, đã hoàn thành năm học đầu tiên của ngành thứ nhất và có học lực xếp loại trung bình khá trở lên.",
+    "expected_context": "Quy định đào tạo song ngành ĐHQG-HCM, Điều 6 - Điều kiện đăng ký học song ngành"
   },
   {
-    "question": "Học phí được thanh toán theo hình thức nào?",
-    "expected_answer": "Thanh toán theo từng học kỳ, tính theo từng môn học đã đăng ký.",
-    "expected_context": "Trang Tuition Fees, mục Payment Structure"
+    "question": "Hồ sơ đăng ký đào tạo song ngành gồm những giấy tờ gì?",
+    "expected_answer": "Gồm Tờ trình đăng ký đào tạo song ngành (Phụ lục I) và Chương trình đào tạo song ngành xây dựng theo mẫu quy định (Phụ lục II), được thủ trưởng cơ sở đào tạo xác nhận.",
+    "expected_context": "Quy định đào tạo song ngành ĐHQG-HCM, Điều 7 - Đăng ký, phê duyệt hồ sơ đào tạo song ngành"
   },
   {
-    "question": "Trường có cung cấp ký túc xá trong khuôn viên không?",
-    "expected_answer": "Không — trường không cung cấp chỗ ở trong khuôn viên, nhưng có đội ngũ hỗ trợ sinh viên tìm chỗ ở gần trường.",
-    "expected_context": "Trang Accommodation Services"
+    "question": "Học phí của sinh viên học song ngành được tính như thế nào?",
+    "expected_answer": "Học phí được xác định từ tổng học phí các môn học của chương trình ngành thứ nhất cộng với học phí các môn học của chương trình ngành thứ hai mà sinh viên đăng ký; các tín chỉ trùng hoặc được công nhận tương đương chỉ tính học phí theo ngành thứ nhất.",
+    "expected_context": "Quy định đào tạo song ngành ĐHQG-HCM, Điều 9 - Công tác tài chính"
+  },
+  {
+    "question": "Sinh viên học song ngành có được hưởng học bổng cho chương trình ngành thứ hai không?",
+    "expected_answer": "Không. Sinh viên không được tham gia chính sách học bổng và miễn giảm học phí đối với chương trình đào tạo ngành thứ hai.",
+    "expected_context": "Quy định đào tạo song ngành ĐHQG-HCM, Điều 9 - Công tác tài chính, khoản 4"
+  },
+  {
+    "question": "Điều kiện để sinh viên được xét tốt nghiệp chương trình ngành thứ hai (song ngành) là gì?",
+    "expected_answer": "Điều kiện tiên quyết là sinh viên phải đã đủ điều kiện tốt nghiệp chương trình đào tạo ngành thứ nhất, trong thời gian tối đa hoàn thành chương trình đào tạo đã quy định.",
+    "expected_context": "Quy định đào tạo song ngành ĐHQG-HCM, Điều 10 - Điều kiện tốt nghiệp và cấp bằng"
+  },
+  {
+    "question": "Mục tiêu của quy định công nhận, chuyển đổi tín chỉ tại ĐHQG-HCM là gì?",
+    "expected_answer": "Là cơ sở để các trường xem xét công nhận, chuyển đổi tín chỉ các vi học phần người học đã tích lũy từ ngành/chương trình khác, áp dụng cho đào tạo song ngành, ngành chính - ngành phụ, liên ngành, liên trường, đào tạo từ xa, vừa làm vừa học, và cho sinh viên có nhu cầu học lại, cải thiện điểm.",
+    "expected_context": "Quy định công nhận, chuyển đổi tín chỉ ĐHQG-HCM, Điều 3 - Mục tiêu"
+  },
+  {
+    "question": "Nguyên tắc công nhận, chuyển đổi tín chỉ giữa các môn học/học phần yêu cầu mức độ tương đồng tối thiểu bao nhiêu phần trăm?",
+    "expected_answer": "Cơ sở đào tạo thực hiện công nhận, chuyển đổi tín chỉ đảm bảo mức độ tương đồng đạt tỷ lệ từ 70% trở lên.",
+    "expected_context": "Quy định công nhận, chuyển đổi tín chỉ ĐHQG-HCM, Điều 4, khoản 5"
+  },
+  {
+    "question": "Ai có thẩm quyền phê duyệt danh mục các vi học phần, khối học phần công nhận, chuyển đổi tín chỉ?",
+    "expected_answer": "ĐHQG-HCM phê duyệt danh mục các vi học phần, khối học phần công nhận, chuyển đổi tín chỉ; cơ sở đào tạo có trách nhiệm rà soát và công bố danh mục này đến người học.",
+    "expected_context": "Quy định công nhận, chuyển đổi tín chỉ ĐHQG-HCM, Điều 4 khoản 3 và Điều 6"
+  },
+  {
+    "question": "Thời gian đào tạo chương trình văn bằng thứ nhất hệ đào tạo từ xa tại UIT là bao lâu?",
+    "expected_answer": "Từ 3 đến 5 năm đối với chương trình văn bằng thứ nhất.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 10 - Khóa học"
+  },
+  {
+    "question": "Thời gian tối đa để hoàn thành chương trình đào tạo từ xa (để được cấp bằng) là bao lâu?",
+    "expected_answer": "Không vượt quá 2 lần thời gian theo kế hoạch học tập chuẩn toàn khóa.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 10 - Khóa học, khoản 2"
+  },
+  {
+    "question": "Học phí đào tạo từ xa tại UIT được tính theo công thức nào?",
+    "expected_answer": "Học phí = HPTCHM × TCHPHM + HPTCHL × TCHPHL + HPTCCT × TCHPCT, trong đó HPTCHM/HPTCHL/HPTCCT là mức học phí theo tín chỉ học mới/học lại/học cải thiện, và TCHPHM/TCHPHL/TCHPCT là tổng số tín chỉ học phí tương ứng. Học phí được thu theo từng học kỳ.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 11 - Nguyên tắc xác định học phí"
+  },
+  {
+    "question": "Sinh viên đào tạo từ xa tại UIT có thể xin bảo lưu kết quả trúng tuyển trong trường hợp nào và thời hạn nộp đơn là bao lâu?",
+    "expected_answer": "Trong các trường hợp đặc biệt như được điều động vào lực lượng vũ trang, thai sản, bệnh tật, tai nạn, hoàn cảnh khó khăn đột xuất. Thí sinh phải nộp đơn xin bảo lưu chậm nhất 15 ngày kể từ ngày gọi nhập học và chỉ được bảo lưu khi có quyết định chấp thuận của Hiệu trưởng; thời gian bảo lưu không quá 1 năm.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 14 - Bảo lưu kết quả trúng tuyển"
+  },
+  {
+    "question": "Môn học trong chương trình đào tạo từ xa của UIT được tổ chức giảng dạy theo những phương thức nào?",
+    "expected_answer": "Theo một hoặc kết hợp nhiều phương thức: học tập trung tại địa điểm đào tạo của Trường, hoặc học trực tuyến qua hệ thống phần mềm giảng dạy trực tuyến.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 12 - Phương thức giảng dạy môn học"
+  },
+  {
+    "question": "Sinh viên đào tạo từ xa UIT bị cảnh báo học vụ trong trường hợp nào?",
+    "expected_answer": "Nếu không đóng học phí theo quy định, hoặc không dự kiểm tra/thi kết thúc môn học quá 30% số môn học đã đăng ký trong năm học.",
+    "expected_context": "Quy chế đào tạo từ xa UIT, Điều 16 - Xử lý học vụ"
+  },
+  {
+    "question": "Hội nghị Đảng viên lần 1 năm 2026 của Đảng bộ Trường Đại học Công nghệ Thông tin được tổ chức khi nào và có ai tham dự?",
+    "expected_answer": "Hội nghị được tổ chức sáng ngày 30/7/2026. Tham dự có đồng chí Trần Anh Cường - Chủ tịch Công đoàn ĐHQG-HCM, PGS.TS Vũ Đức Lung - Phó Bí thư Đảng ủy, Phó Hiệu trưởng Nhà trường, cùng Ban Chấp hành Đảng bộ Trường, lãnh đạo các đơn vị và toàn thể Đảng viên.",
+    "expected_context": "Tin UIT: Đảng bộ Trường Đại học Công nghệ Thông tin tổ chức Hội nghị Đảng viên lần 1 năm 2026"
+  },
+  {
+    "question": "UIT hợp tác với chuyên gia nào từ Trung Quốc trong lĩnh vực AI, robot và nông nghiệp thông minh, và khi nào?",
+    "expected_answer": "Ngày 24/7/2026, UIT có buổi làm việc với Giáo sư Longsheng Fu đến từ Northwest A&F University (Trung Quốc), trao đổi định hướng hợp tác trong các lĩnh vực trí tuệ nhân tạo, thị giác máy tính, robot và nông nghiệp thông minh.",
+    "expected_context": "Tin UIT: UIT mở rộng kết nối học thuật trong lĩnh vực AI, robot và nông nghiệp thông minh"
+  },
+  {
+    "question": "PGS.TS. Chung-Tse Michael Wu đến từ trường đại học nào và ông là chuyên gia trong lĩnh vực gì?",
+    "expected_answer": "Ông là Phó Giáo sư Khoa Kỹ thuật Điện, Đại học Quốc gia Đài Loan (NTU), chuyên gia trong lĩnh vực điện từ ứng dụng, ăng-ten, linh kiện vi sóng và sóng milimet, mạch tích hợp vi ba đơn khối (MMIC), hệ thống RF và siêu vật liệu điện từ (Metamaterials).",
+    "expected_context": "Tin UIT: Chào mừng PGS.TS. Chung-Tse Michael Wu đến với Trường Đại học Công nghệ Thông tin"
+  },
+  {
+    "question": "Sinh viên Huỳnh Ngọc Bảo đã tham gia chương trình quốc tế nào tại Singapore và Indonesia?",
+    "expected_answer": "Huỳnh Ngọc Bảo, sinh viên Khoa Khoa học Máy tính UIT, tham gia ASEAN Summer @NTU Programme 2026 trong 18 ngày tại Singapore và Indonesia, bắt đầu từ tháng 7/2026, với điểm đến đầu tiên là Nanyang Technological University (NTU Singapore).",
+    "expected_context": "Tin UIT: Từ UIT đến Singapore và Indonesia: 18 ngày để nhìn thế giới rộng hơn"
   }
 ]

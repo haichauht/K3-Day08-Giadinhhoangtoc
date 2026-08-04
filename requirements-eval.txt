@@ -1,0 +1,13 @@
+# Group project - Evaluation (venv rieng: venv_eval)
+# Tach khoi requirements.txt vi ragas 0.1.21 can openai<2.0 va langchain<0.3,
+# trong khi crawl4ai (requirements.txt chinh) keo theo litellm ban Windows
+# wheel moi nhat can openai>=2.20 -> khong the cai chung 1 venv.
+# Cach dung:
+#   python -m venv venv_eval
+#   source venv_eval/Scripts/activate   (hoac venv_eval\Scripts\activate trong PowerShell)
+#   pip install -r requirements-eval.txt
+python-dotenv>=1.0.0
+ragas==0.1.21
+datasets>=2.14.0
+langchain-openai>=0.1.0,<0.2.0
+openai>=1.30.0,<2.0.0
