@@ -8,7 +8,9 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import csv
 import io
+import json
 import re
 import time
 from copy import deepcopy
@@ -21,7 +23,18 @@ from bs4 import BeautifulSoup, Tag
 from markitdown import MarkItDown
 
 LIST_URL = "https://www.uit.edu.vn/tin-uit"
-DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "landing" / "news"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO_ROOT / "data" / "landing" / "news"
+SOURCE_CSV_FIELDS = (
+    "doc_id",
+    "file_path",
+    "title",
+    "source_url",
+    "retrieved_at",
+    "document_version",
+    "license_or_permission",
+    "cleaning_version",
+)
 USER_AGENT = (
     "Mozilla/5.0 (compatible; UITNewsCrawler/1.0; "
     "+https://www.uit.edu.vn/tin-uit)"
@@ -191,6 +204,69 @@ def crawl(pages: int, output_dir: Path, delay: float) -> int:
     return saved
 
 
+def read_front_matter(markdown_path: Path) -> dict[str, str]:
+    """Read the simple YAML front matter emitted by this crawler."""
+    lines = markdown_path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != "---":
+        return {}
+
+    metadata: dict[str, str] = {}
+    for line in lines[1:]:
+        if line == "---":
+            break
+        key, separator, raw_value = line.partition(":")
+        if not separator:
+            continue
+        raw_value = raw_value.strip()
+        try:
+            value = json.loads(raw_value) if raw_value.startswith('"') else raw_value
+        except json.JSONDecodeError:
+            value = raw_value.strip('"')
+        metadata[key.strip()] = str(value)
+    return metadata
+
+
+def source_file_path(markdown_path: Path) -> str:
+    try:
+        return markdown_path.resolve().relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return markdown_path.name
+
+
+def rebuild_source_csv(output_dir: Path) -> tuple[Path, int]:
+    """Rebuild source.csv from all Markdown documents already in output_dir."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    rows: list[dict[str, str]] = []
+
+    for markdown_path in sorted(output_dir.glob("*.md")):
+        metadata = read_front_matter(markdown_path)
+        required = ("doc_id", "title", "source_url", "retrieved_at")
+        if any(not metadata.get(field) for field in required):
+            print(f"  Source index skipped (missing metadata): {markdown_path.name}")
+            continue
+        rows.append(
+            {
+                "doc_id": metadata["doc_id"],
+                "file_path": source_file_path(markdown_path),
+                "title": metadata["title"],
+                "source_url": metadata["source_url"],
+                "retrieved_at": metadata["retrieved_at"],
+                "document_version": metadata.get("document_version", "not-stated"),
+                "license_or_permission": "public-page",
+                "cleaning_version": metadata.get(
+                    "cleaning_version", "markitdown-v1"
+                ),
+            }
+        )
+
+    source_path = output_dir / "source.csv"
+    with source_path.open("w", encoding="utf-8", newline="") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=SOURCE_CSV_FIELDS)
+        writer.writeheader()
+        writer.writerows(rows)
+    return source_path, len(rows)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Crawl UIT news to Markdown")
     parser.add_argument(
@@ -211,6 +287,11 @@ def parse_args() -> argparse.Namespace:
         default=0.5,
         help="Delay in seconds between article requests (default: 0.5)",
     )
+    parser.add_argument(
+        "--rebuild-source-csv",
+        action="store_true",
+        help="Only rebuild source.csv from existing Markdown files",
+    )
     args = parser.parse_args()
     if args.pages < 1:
         parser.error("--pages must be at least 1")
@@ -221,8 +302,15 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.rebuild_source_csv:
+        source_path, row_count = rebuild_source_csv(args.output)
+        print(f"Done: indexed {row_count} Markdown file(s) in {source_path.resolve()}")
+        return
+
     saved = crawl(args.pages, args.output, args.delay)
+    source_path, row_count = rebuild_source_csv(args.output)
     print(f"Done: saved {saved} Markdown file(s) to {args.output.resolve()}")
+    print(f"Source index: {row_count} row(s) in {source_path.resolve()}")
 
 
 if __name__ == "__main__":
